@@ -17,7 +17,7 @@ const SocialTab: React.FC<SocialTab> = () => {
             <ul className={styles.menuList}>
                 <li className={styles.socialIcons}>
                     <a
-                        href="https://x.com/other_italy"
+                        href="https://x.com/xxx"
                         target="_blank"
                         rel="noopener noreferrer"
 
@@ -26,7 +26,7 @@ const SocialTab: React.FC<SocialTab> = () => {
                     </a>
 
                     <a
-                        href="https://discord.gg/bE5qZNngw8"
+                        href="https://discord.gg/xxx"
                         target="_blank"
                         rel="noopener noreferrer"
 
@@ -34,7 +34,7 @@ const SocialTab: React.FC<SocialTab> = () => {
                         <FaDiscord />
                     </a>
                     <a
-                        href="https://magiceden.io/collections/apechain/0x670c153118026660dc3bf93da7d80cf8107eb954"
+                        href="https://magiceden.io/collections/apechain/xxx"
                         target="_blank"
                         rel="noopener noreferrer"
 
