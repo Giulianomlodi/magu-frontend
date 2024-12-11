@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 
 interface Message {
   id: string;
@@ -142,7 +143,9 @@ const HeroSection = () => {
       </div>
       <div className={`md:w-1/2 ${isMobile ? 'h-[50vh] w-full overflow-hidden' : 'h-screen'} mt-8 md:mt-0 flex items-center justify-center`}>
         <div className={isMobile ? 'scale-[0.7] origin-center' : ''}>
-          <Test3DSpline splineUrl={isMobile ? "https://prod.spline.design/MpvqM89Zj0fs2g57/scene.splinecode" : "https://prod.spline.design/MpvqM89Zj0fs2g57/scene.splinecode"} />
+          <Image src="/images/YG.png" alt="Logo" width={800} height={800} />
+
+          {/* <Test3DSpline splineUrl={isMobile ? "https://prod.spline.design/MpvqM89Zj0fs2g57/scene.splinecode" : "https://prod.spline.design/MpvqM89Zj0fs2g57/scene.splinecode"} /> */}
         </div>
       </div>
     </section>
