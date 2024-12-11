@@ -5,8 +5,8 @@ import { Inter } from 'next/font/google';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAccount } from 'wagmi';
 import { useChainConfig } from '@/config/network';
-import NFTMintingInterface from '@/components/web3/mint/NFTMintingInterface;
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import NFTMintingInterface from '@/components/web3/mint/NFTMintingInterface';
 
 // Move font initialization outside component
 const deliusSwashCaps = Inter({
@@ -55,9 +55,7 @@ const Hero = () => {
         }
 
         return (
-            <NFTMintingInterface
-                contractAddress={addresses.BORED_ITALY_ADDRESS}
-            />
+            <NFTMintingInterface contractAddress={addresses.BORED_ITALY_ADDRESS} />
         );
     };
 
