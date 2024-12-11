@@ -18,8 +18,7 @@ export const useChainConfig = () => {
           .NEXT_PUBLIC_BANANA_TOKEN_ADDRESS as `0x${string}`,
         GRAPHQL_ENDPOINT:
           "https://subgraph.satsuma-prod.com/1fbdab357f8a/giuliano--794168/banana-graph/api",
-        BORED_ITALY_ADDRESS: process.env
-          .NEXT_PUBLIC_BORED_ITALY_ADDRESS as `0x${string}`,
+        BORED_ITALY_ADDRESS: process.env.NEXT_PUBLIC_ADDRESS as `0x${string}`,
       };
     }
     // Curtis (Test Network)
@@ -34,7 +33,7 @@ export const useChainConfig = () => {
         GRAPHQL_ENDPOINT:
           "https://subgraph.satsuma-prod.com/1fbdab357f8a/giuliano--794168/test-banana-graph/api",
         BORED_ITALY_ADDRESS: process.env
-          .NEXT_PUBLIC_BORED_ITALY_TEST_ADDRESS as `0x${string}`,
+          .NEXT_PUBLIC_TEST_ADDRESS as `0x${string}`,
       };
     }
 

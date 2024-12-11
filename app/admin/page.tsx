@@ -10,7 +10,7 @@ import WhitelistDashboard from '@/components/admin/whitelistDashboard';
 import Admin from '@/components/web3/Admin/Admin';
 
 
-const contractAddress = process.env.NEXT_PUBLIC_BORED_ITALY_TEST_ADDRESS as `0x${string}`;
+const contractAddress = process.env.NEXT_PUBLIC_TEST_ADDRESS as `0x${string}`;
 
 const deliusSwashCaps = Delius_Swash_Caps({
     weight: '400',

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Lock } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useWhitelistStatus } from './useWhitelistStatus';
-import { italyABI } from '@/other-italy-abi';
+import { abi } from '@/contract-abi';
 import { Inter } from 'next/font/google';
 import { Hash } from 'viem';
 

@@ -2,13 +2,48 @@ export const abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_mintPrice",
-        type: "uint256",
+        internalType: "address",
+        name: "_entropy",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_entropyProvider",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "_whitelistMerkleRoot",
+        type: "bytes32",
+      },
+      {
+        internalType: "string",
+        name: "initialBaseURI",
+        type: "string",
       },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
+  },
+  {
+    inputs: [],
+    name: "AlreadyClaimed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "AlreadyMinted",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "CallbackGasLimitExceeded",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ERC721EnumerableForbiddenBatchMint",
+    type: "error",
   },
   {
     inputs: [
@@ -114,13 +149,39 @@ export const abi = [
     type: "error",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "ERC721OutOfBoundsIndex",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "EntranceFeeNotPaid",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InsufficientContractBalance",
+    type: "error",
+  },
+  {
     inputs: [],
     name: "InsufficientPayment",
     type: "error",
   },
   {
     inputs: [],
-    name: "InvalidMintAmount",
+    name: "InvalidAddress",
     type: "error",
   },
   {
@@ -130,17 +191,17 @@ export const abi = [
   },
   {
     inputs: [],
-    name: "MaxSupplyReached",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "MaxWalletMintReached",
+    name: "InvalidTokenId",
     type: "error",
   },
   {
     inputs: [],
     name: "MintNotActive",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotWhitelisted",
     type: "error",
   },
   {
@@ -173,11 +234,6 @@ export const abi = [
   {
     inputs: [],
     name: "TransferFailed",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "WhitelistAlreadyClaimed",
     type: "error",
   },
   {
@@ -247,45 +303,38 @@ export const abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "bytes32",
-        name: "newMerkleRoot",
-        type: "bytes32",
-      },
-    ],
-    name: "MerkleRootUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "newPrice",
-        type: "uint256",
-      },
-    ],
-    name: "MintPriceUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: true,
         internalType: "address",
-        name: "to",
+        name: "user",
         type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "uint256",
-        name: "tokenId",
+        name: "amount",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "discounted",
+        type: "bool",
+      },
     ],
-    name: "NFTMinted",
+    name: "EntrancePaid",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "isActive",
+        type: "bool",
+      },
+    ],
+    name: "MintStateChanged",
     type: "event",
   },
   {
@@ -311,19 +360,37 @@ export const abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
         name: "to",
         type: "address",
       },
       {
+        indexed: true,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "entropy",
+        type: "bytes32",
+      },
+      {
         indexed: false,
         internalType: "uint256",
-        name: "amount",
+        name: "wisdom",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "power",
         type: "uint256",
       },
     ],
-    name: "PaymentWithdrawn",
+    name: "TokenMinted",
     type: "event",
   },
   {
@@ -352,8 +419,21 @@ export const abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "newMerkleRoot",
+        type: "bytes32",
+      },
+    ],
+    name: "WhitelistMerkleRootUpdated",
+    type: "event",
+  },
+  {
     inputs: [],
-    name: "MAX_MINT_PER_WALLET",
+    name: "CALLBACK_GAS_LIMIT",
     outputs: [
       {
         internalType: "uint256",
@@ -366,7 +446,7 @@ export const abi = [
   },
   {
     inputs: [],
-    name: "MAX_SUPPLY",
+    name: "REGULAR_ENTRANCE_FEE",
     outputs: [
       {
         internalType: "uint256",
@@ -375,6 +455,55 @@ export const abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "WHITELIST_DISCOUNT",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "WHITELIST_ENTRANCE_FEE",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "sequence",
+        type: "uint64",
+      },
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "randomNumber",
+        type: "bytes32",
+      },
+    ],
+    name: "_entropyCallback",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -428,6 +557,45 @@ export const abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "baseURI",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "entropy",
+    outputs: [
+      {
+        internalType: "contract IEntropy",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "entropyProvider",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -448,12 +616,174 @@ export const abi = [
   },
   {
     inputs: [],
-    name: "getCurrentMinted",
+    name: "getCurrentTokenId",
     outputs: [
       {
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "getHasClaimedDiscount",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "getHasMinted",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "getHasPaidEntrance",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "sequenceNumber",
+        type: "uint64",
+      },
+    ],
+    name: "getPendingMintAddress",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "getUserState",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "hasClaimedDiscount_",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "hasPaidEntrance_",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "hasMinted_",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "hasClaimedDiscount",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "hasMinted",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "hasPaidEntrance",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -484,45 +814,6 @@ export const abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "merkleRoot",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "mint",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "mintPrice",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -530,33 +821,24 @@ export const abi = [
         type: "address",
       },
       {
+        internalType: "bytes32",
+        name: "aiRandomNumber",
+        type: "bytes32",
+      },
+      {
         internalType: "uint256",
-        name: "amount",
+        name: "wisdom",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "power",
         type: "uint256",
       },
     ],
     name: "mintTo",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "mintedPerWallet",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -605,22 +887,23 @@ export const abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "payEntranceFee",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
     inputs: [
       {
-        internalType: "address",
-        name: "wallet",
-        type: "address",
+        internalType: "bytes32[]",
+        name: "merkleProof",
+        type: "bytes32[]",
       },
     ],
-    name: "remainingMints",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
+    name: "payEntranceFeeWhitelist",
+    outputs: [],
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -715,19 +998,6 @@ export const abi = [
   {
     inputs: [
       {
-        internalType: "string",
-        name: "_newBaseURI",
-        type: "string",
-      },
-    ],
-    name: "setBaseURI",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "bytes4",
         name: "interfaceId",
         type: "bytes4",
@@ -752,6 +1022,83 @@ export const abi = [
         internalType: "string",
         name: "",
         type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "tokenAttributes",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "entropy",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
+        name: "wisdom",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "power",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "mintTimestamp",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "tokenByIndex",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "tokenOfOwnerByIndex",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -828,12 +1175,12 @@ export const abi = [
   {
     inputs: [
       {
-        internalType: "bytes32",
-        name: "_newMerkleRoot",
-        type: "bytes32",
+        internalType: "string",
+        name: "newBaseURI",
+        type: "string",
       },
     ],
-    name: "updateMerkleRoot",
+    name: "updateBaseURI",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -841,56 +1188,31 @@ export const abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "",
-        type: "address",
+        internalType: "bytes32",
+        name: "_newMerkleRoot",
+        type: "bytes32",
       },
     ],
-    name: "whitelistClaimed",
+    name: "updateWhitelistMerkleRoot",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "whitelistMerkleRoot",
     outputs: [
       {
-        internalType: "bool",
+        internalType: "bytes32",
         name: "",
-        type: "bool",
+        type: "bytes32",
       },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes32[]",
-        name: "_merkleProof",
-        type: "bytes32[]",
-      },
-    ],
-    name: "whitelistMint",
-    outputs: [],
     stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "withdraw",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    type: "receive",
   },
 ] as const;
