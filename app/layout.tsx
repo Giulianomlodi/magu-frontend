@@ -15,20 +15,20 @@ const deliusSwashCaps = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Other Italy Membership',
-  description: 'Other Italy Membership Mint',
+  title: 'Magu',
+  description: 'Magu Mint',
   // metadataBase: new URL(''),
   openGraph: {
-    title: 'Other Italy Mint Page',
-    description: 'Other Italy',
+    title: 'Magu Mint Page',
+    description: 'Magu',
     url: '',
-    siteName: 'Other Italy',
+    siteName: 'Magu',
     images: [
       {
         url: '/OtherIta.jpg',  // Path relative to the public directory
         width: 1200,
         height: 630,
-        alt: 'Other Italy',
+        alt: 'Magu',
       },
     ],
     locale: 'en_US',
@@ -36,8 +36,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Other Italy',
-    description: 'Other Italy Mint Page',
+    title: 'Magu',
+    description: 'Magu Mint Page',
     images: ['/OtherIta.jpg'],
     creator: '@otakun_0x',
   },
