@@ -1,0 +1,28 @@
+[2024-11-20T17:08:28.905Z] Searching for address
+{
+  "address": "0xc98cb209f8f6b777d5624d55a366ec1612844305"
+}
+[2024-11-20T17:08:28.943Z] DB Query Result
+{
+  "searchAddress": "0xc98cb209f8f6b777d5624d55a366ec1612844305",
+  "found": true,
+  "resultAddress": "0xc98cb209f8f6b777d5624d55a366ec1612844305",
+  "tokenCount": 4,
+  "tokenIdsLength": 4,
+  "distributionsLength": 11,
+  "campaignStats": {
+    "totalAccumulatedTokens": 0,
+    "lastProcessedDay": 0
+  }
+}
+[2024-11-20T17:08:28.945Z] Processed holder data
+{
+  "address": "0xc98cb209f8f6b777d5624d55a366ec1612844305",
+  "campaignStats": {
+    "totalAccumulatedTokens": 92411,
+    "lastProcessedDay": 11
+  },
+  "tokenCount": 4,
+  "distributionsLength": 11,
+  "totalAccumulated": 92411
+}

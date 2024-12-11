@@ -1,0 +1,16 @@
+[build]
+  command = "next build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20.11.1"
+  NPM_FLAGS = "--legacy-peer-deps"
+  NEXT_PUBLIC_BANANA_NFT_ADDRESS = "0x014ede7658f44557512fa63b4afcd50a4022f0fe"
+  NEXT_PUBLIC_BANANA_TOKEN_ADDRESS = "0x7d70C1EFA67dACb7087E8B0F996F883dFAdA65a4"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[[edge_functions]]
+  path = "/api/holders/*"
+  function = "holders"

@@ -1,0 +1,9 @@
+[2024-11-08T17:06:12.131Z] Searching for address
+{
+  "address": "0xe43563a4c58ae485578597b7cad0614517152c09"
+}
+[2024-11-08T17:06:12.200Z] DB Query Result
+{
+  "searchAddress": "0xe43563a4c58ae485578597b7cad0614517152c09",
+  "found": false
+}
