@@ -12,6 +12,8 @@ import { Message, UserState } from "./types";
 import { WHITELIST_CONFIG } from "./config";
 import { abi } from "@/contract-abi";
 
+const MAGU_GATEWAY_URL = "http://139.59.136.65:5000";
+
 export function useChat(contractAddress: `0x${string}`) {
   const { address } = useAccount();
   const publicClient = usePublicClient();
@@ -30,6 +32,7 @@ export function useChat(contractAddress: `0x${string}`) {
   const [error, setError] = useState<string | null>(null);
   const [isMinting, setIsMinting] = useState(false);
   const [isNFTMinted, setIsNFTMinted] = useState(false);
+  const [isAIResponding, setIsAIResponding] = useState(false);
 
   const { isWhitelisted, merkleProof } = useWhitelistStatus(
     address,
@@ -52,7 +55,7 @@ export function useChat(contractAddress: `0x${string}`) {
       hash: pendingTxHash,
     });
 
-  // Set up contract event watching
+  // Contract event watching (unchanged)
   useEffect(() => {
     if (!publicClient || !address || !contractAddress) return;
 
@@ -64,7 +67,6 @@ export function useChat(contractAddress: `0x${string}`) {
         user: address,
       } as const,
       onLogs: (logs) => {
-        // Check if the event is for the current user
         const relevantLog = logs.find(
           (log) => log.args.user?.toLowerCase() === address.toLowerCase()
         );
@@ -79,12 +81,11 @@ export function useChat(contractAddress: `0x${string}`) {
     };
   }, [publicClient, address, contractAddress, refetchUserState]);
 
-  // Update states based on contract data
+  // Update states based on contract data (unchanged)
   useEffect(() => {
     if (userState && Array.isArray(userState)) {
       const [hasClaimedDiscount, hasPaidEntrance, hasMinted] = userState;
 
-      // Only update if the state has changed
       if (isEntrancePaid !== hasPaidEntrance) {
         setIsEntrancePaid(hasPaidEntrance);
         if (hasPaidEntrance && messages.length === 1) {
@@ -99,7 +100,7 @@ export function useChat(contractAddress: `0x${string}`) {
     }
   }, [userState, messages.length, isEntrancePaid]);
 
-  // Handle transaction completion
+  // Handle transaction completion (unchanged)
   useEffect(() => {
     if (isTxSuccess) {
       setIsProcessing(false);
@@ -108,7 +109,7 @@ export function useChat(contractAddress: `0x${string}`) {
     }
   }, [isTxSuccess, refetchUserState]);
 
-  // Reset error when transaction is processing
+  // Reset error when transaction is processing (unchanged)
   useEffect(() => {
     if (isTxLoading) {
       setError(null);
@@ -185,7 +186,7 @@ export function useChat(contractAddress: `0x${string}`) {
     }
   };
 
-  const addMessage = (content: string, sender: "user" | "ai") => {
+  const addMessage = async (content: string, sender: "user" | "ai") => {
     if (!isEntrancePaid) {
       setError("Please pay the entrance fee first");
       return;
@@ -198,16 +199,53 @@ export function useChat(contractAddress: `0x${string}`) {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => {
-      const newMessages = [...prev, newMessage];
-      if (
-        sender === "ai" &&
-        newMessages.filter((m) => m.sender === "user").length >= 3
-      ) {
-        mintNFT();
+    setMessages((prev) => [...prev, newMessage]);
+
+    // If it's a user message, get AI response
+    if (sender === "user" && !isAIResponding) {
+      setIsAIResponding(true);
+      try {
+        const response = await fetch(`${MAGU_GATEWAY_URL}/api/chat`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "cors", // explicitly set CORS mode
+          body: JSON.stringify({
+            message: content,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to get AI response");
+        }
+
+        const data = await response.json();
+
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          content: data.response,
+          sender: "ai",
+          timestamp: new Date(),
+        };
+
+        setMessages((prev) => {
+          const newMessages = [...prev, aiMessage];
+          // Check if we should mint NFT after AI response
+          if (newMessages.filter((m) => m.sender === "user").length >= 3) {
+            mintNFT();
+          }
+          return newMessages;
+        });
+      } catch (error) {
+        console.error("AI response error:", error);
+        setError(
+          error instanceof Error ? error.message : "Failed to get AI response"
+        );
+      } finally {
+        setIsAIResponding(false);
       }
-      return newMessages;
-    });
+    }
   };
 
   return {
@@ -218,6 +256,7 @@ export function useChat(contractAddress: `0x${string}`) {
     isWhitelisted,
     isMinting,
     isNFTMinted,
+    isAIResponding,
     addMessage,
     payEntranceFee,
     userState:
